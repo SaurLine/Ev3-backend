@@ -1,46 +1,25 @@
 from django.core.management.base import BaseCommand
 from django.contrib.auth.models import User
+from usuarios.models import PerfilUsuario  # <-- Importado desde la app usuarios
 from models import Genero, Videojuego
 from decimal import Decimal
 
 class Command(BaseCommand):
-    help = 'Pobla la base de datos con 4 géneros, 8 videojuegos alineados al modelo y usuarios (admin y estándar).'
+    help = 'Pobla la base de datos con usuarios, perfiles y videojuegos.'
 
     def handle(self, *args, **kwargs):
-        self.stdout.write(self.style.WARNING('Iniciando proceso de población de datos...'))
-
-        # 1. Creación de Usuarios de Prueba (Admin y Estándar)
-        admin_user, created_admin = User.objects.get_or_create(
+        admin_user, _ = User.objects.get_or_create(
             username='admin_tienda',
-            defaults={
-                'email': 'admin@tiendajuegos.com',
-                'is_staff': True,
-                'is_superuser': True
-            }
+            defaults={'email': 'admin@tiendajuegos.com', 'is_staff': True, 'is_superuser': True}
         )
-        if created_admin:
-            admin_user.set_password('admin1234')
-            admin_user.save()
-            self.stdout.write(self.style.SUCCESS('-> Usuario administrador creado: admin_tienda / admin1234'))
-        else:
-            self.stdout.write('-> El usuario administrador ya existía.')
+        admin_user.set_password('admin1234')
+        admin_user.save()
 
-        std_user, created_std = User.objects.get_or_create(
-            username='cliente_estandar',
-            defaults={
-                'email': 'cliente@tiendajuegos.com',
-                'is_staff': False,
-                'is_superuser': False
-            }
+        PerfilUsuario.objects.get_or_create(
+            user=admin_user,
+            defaults={'rut': '12345678-9', 'telefono': '+56911111111', 'rol_institucional': PerfilUsuario.RolInstitucional.ADMINISTRADOR}
         )
-        if created_std:
-            std_user.set_password('cliente1234')
-            std_user.save()
-            self.stdout.write(self.style.SUCCESS('-> Usuario estándar creado: cliente_estandar / cliente1234'))
-        else:
-            self.stdout.write('-> El usuario estándar ya existía.')
 
-        # 2. Creación de 4 Clasificadores (Géneros)
         generos_data = [
             {"nombre": "Acción y Aventura", "slug": "accion-y-aventura"},
             {"nombre": "Rol (RPG)", "slug": "rol-rpg"},
@@ -57,7 +36,7 @@ class Command(BaseCommand):
             generos_objs[g_data["slug"]] = gen
         self.stdout.write(self.style.SUCCESS(f'-> {len(generos_data)} géneros asegurados.'))
 
-        # 3. Creación de 8 Entidades Principales (Videojuegos)
+
         juegos_data = [
             {
                 "codigo": "ACC-001",
@@ -161,7 +140,7 @@ class Command(BaseCommand):
                 "stock": 0,
                 "estado": Videojuego.EstadoJuego.AGOTADO,
                 "genero_slug": "deportes",
-                "activo": False  # Ejemplo de registro con baja lógica (activo=False)
+                "activo": False  
             },
         ]
 

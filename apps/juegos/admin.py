@@ -1,5 +1,5 @@
 from django.contrib import admin
-from models import Genero, Videojuego
+from .models import Genero, Videojuego
 
 admin.site.site_header = 'MamboStore - Panel de Control'
 admin.site.site_title = 'MamboStore Admin'
