@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 from django.contrib.auth.models import User
-from tu_app.models import Genero, Videojuego
+from models import Genero, Videojuego
 from decimal import Decimal
 
 class Command(BaseCommand):
