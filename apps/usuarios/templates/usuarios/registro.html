@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Registro - MamboStore</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light d-flex align-items-center py-5" style="min-height: 100vh;">
+    <div class="container" style="max-width: 550px;">
+        <div class="card shadow p-4">
+            <h2 class="text-center fw-bold mb-4">Registro de Cliente</h2>
+            
+            <form method="POST" novalidate>
+                {% csrf_token %}
+
+                {% for field in form %}
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">{{ field.label }}</label>
+                        {{ field }}
+                        {% for error in field.errors %}
+                            <div class="text-danger small mt-1">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+
+                <div class="d-grid mt-4">
+                    <button type="submit" class="btn btn-primary btn-lg">Registrarse como Cliente</button>
+                </div>
+            </form>
+            <div class="text-center mt-3">
+                <small class="text-muted">¿Ya tienes una cuenta? <a href="{% url 'login' %}">Inicia sesión aquí</a></small>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

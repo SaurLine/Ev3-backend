@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ juego.titulo }} - MamboStore{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'inicio' %}">Inicio</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'catalogo' %}">Catálogo</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ juego.titulo }}</li>
+        </ol>
+    </nav>
+
+    <div class="card shadow border-0 overflow-hidden">
+        <div class="row g-0">
+
+            <div class="col-md-6 bg-dark d-flex align-items-center justify-content-center">
+                {% if juego.imagen %}
+                    <img src="{{ juego.imagen.url }}" class="img-fluid rounded-start w-100" style="max-height: 450px; object-fit: cover;" alt="{{ juego.titulo }}">
+                {% else %}
+                    <div class="text-white p-5 text-center">
+                        <i class="bi bi-controller display-1 text-muted"></i>
+                        <p class="mt-2 text-muted">Sin imagen disponible</p>
+                    </div>
+                {% endif %}
+            </div>
+
+
+            <div class="col-md-6 p-4 d-flex flex-column justify-content-between">
+                <div>
+
+                    <div class="mb-2 d-flex flex-wrap gap-1 align-items-center">
+                        {% if juego.genero %}
+                            <span class="badge bg-secondary">{{ juego.genero.nombre }}</span>
+                        {% endif %}
+                        <span class="badge bg-info text-dark">{{ juego.get_plataforma_display }}</span>
+                        
+                        {% if juego.desarrollador %}
+                            <span class="badge bg-dark text-light"><i class="bi bi-building"></i> {{ juego.desarrollador }}</span>
+                        {% endif %}
+                    </div>
+                    
+                    <h1 class="fw-bold mb-2">{{ juego.titulo }}</h1>
+                    
+
+                    <div class="mb-3">
+                        {% if juego.stock > 0 and juego.activo %}
+                            <span class="badge bg-success">Stock disponible: {{ juego.stock }} unidades</span>
+                        {% else %}
+                            <span class="badge bg-danger">Producto Sin Stock</span>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-4">
+                        <span class="display-6 fw-bold text-success">${{ juego.precio }}</span>
+                    </div>
+
+                    <h5 class="fw-semibold text-muted mb-2">Descripción</h5>
+                    <p class="card-text text-secondary leading-relaxed" style="white-space: pre-line;">
+                        {{ juego.descripcion }}
+                    </p>
+                </div>
+
+
+                <div class="pt-4 border-top mt-4 d-flex gap-2">
+                    {% if juego.stock > 0 and juego.activo %}
+                        <a href="{% url 'agregar_al_carrito' juego.id %}" class="btn btn-success btn-lg flex-grow-1 shadow-sm">
+                            <i class="bi bi-cart-plus me-1"></i> Agregar al Carrito
+                        </a>
+                    {% else %}
+                        <button class="btn btn-secondary btn-lg flex-grow-1 shadow-sm" disabled>
+                            <i class="bi bi-cart-x me-1"></i> No disponible
+                        </button>
+                    {% endif %}
+                    
+                    <a href="{% url 'catalogo' %}" class="btn btn-outline-secondary btn-lg">
+                        Volver
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

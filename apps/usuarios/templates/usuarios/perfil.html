@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block title %}Mi Perfil - MamboStore{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card shadow-sm border-0 p-4">
+            <div class="d-flex align-items-center mb-4">
+                <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 64px; height: 64px; font-size: 28px;">
+                    <i class="bi bi-person-fill"></i>
+                </div>
+                <div>
+                    <h2 class="fw-bold mb-0">¡Hola, {{ user.username }}!</h2>
+                    <p class="text-muted mb-0">Panel de control de tu cuenta en MamboStore</p>
+                </div>
+            </div>
+            
+            <hr>
+
+            <div class="row mb-3">
+                <div class="col-sm-4 fw-semibold text-muted">Nombre de usuario:</div>
+                <div class="col-sm-8 text-dark">{{ user.username }}</div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-sm-4 fw-semibold text-muted">Correo electrónico:</div>
+                <div class="col-sm-8 text-dark">{{ user.email|default:"No registrado" }}</div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-sm-4 fw-semibold text-muted">Fecha de registro:</div>
+                <div class="col-sm-8 text-dark">{{ user.date_joined|date:"d/m/Y H:i" }}</div>
+            </div>
+
+            {% if user.perfilusuario %}
+            <div class="row mb-3">
+                <div class="col-sm-4 fw-semibold text-muted">Rol institucional:</div>
+                <div class="col-sm-8">
+                    <span class="badge bg-info text-dark">{{ user.perfilusuario.rol }}</span>
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="d-flex justify-content-between align-items-center mt-4">
+                <a href="{% url 'inicio' %}" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left"></i> Volver al Inicio
+                </a>
+                <a href="{% url 'logout' %}" class="btn btn-outline-danger">
+                    <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

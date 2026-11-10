@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block title %}Inicio - MamboStore{% endblock %}
+
+{% block content %}
+    <div class="p-5 mb-5 bg-dark text-white rounded-3 shadow-lg text-center">
+        <div class="container-fluid py-4">
+            <h1 class="display-5 fw-bold">Bienvenido a MamboStore</h1>
+            <p class="col-md-8 fs-4 mx-auto text-muted">Tu tienda definitiva de videojuegos. Explora lanzamientos, gestiona tu catálogo y vive la mejor experiencia gamer.</p>
+            <a href="{% url 'catalogo' %}" class="btn btn-primary btn-lg mt-2 px-4 shadow">Explorar Catálogo Completo</a>
+        </div>
+    </div>
+
+    <div class="container my-4">
+    <h2 class="fw-bold mb-4">Últimos Lanzamientos</h2>
+
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+        {% for juego in ultimos_juegos %}
+            <div class="col">
+                <div class="card h-100 shadow-sm border-0 {% if juego.stock <= 0 or not juego.activo %}opacity-75 bg-light{% endif %}">
+                    {% if juego.imagen %}
+                        <img src="{{ juego.imagen.url }}" class="card-img-top" alt="{{ juego.titulo }}" style="height: 180px; object-fit: cover;">
+                    {% else %}
+                        <div class="bg-secondary text-white d-flex align-items-center justify-content-center" style="height: 180px;">
+                            <span>Sin Imagen</span>
+                        </div>
+                    {% endif %}
+                    
+                    <div class="card-body d-flex flex-column">
+                        <div class="mb-2">
+                            {% if juego.genero %}
+                                <span class="badge bg-secondary">{{ juego.genero.nombre }}</span>
+                            {% endif %}
+                            <span class="badge bg-info text-dark">{{ juego.get_plataforma_display }}</span>
+                        </div>
+
+                        <div class="mb-2">
+                            {% if juego.stock > 0 and juego.activo %}
+                                <span class="badge bg-success">Stock: {{ juego.stock }}</span>
+                            {% else %}
+                                <span class="badge bg-danger">Sin Stock</span>
+                            {% endif %}
+                        </div>
+                        
+                        <h5 class="card-title fw-bold text-truncate">{{ juego.titulo }}</h5>
+                        <p class="card-text text-muted small flex-grow-1">{{ juego.descripcion|truncatechars:70 }}</p>
+                        
+                        <div class="d-flex justify-content-between align-items-center mt-3 pt-2 border-top">
+                            <span class="fs-5 text-success fw-bold">${{ juego.precio }}</span>
+                            <div>
+                                {% if juego.slug %}
+                                    <a href="{% url 'detalle_juego_slug' juego.slug %}" class="btn btn-outline-primary btn-sm">Ver Detalle</a>
+                                {% else %}
+                                    <a href="{% url 'detalle_juego' juego.id %}" class="btn btn-outline-primary btn-sm">Ver Detalle</a>
+                                {% endif %}
+                                
+
+                                {% if juego.stock > 0 and juego.activo %}
+                                    <a href="{% url 'agregar_al_carrito' juego.id %}" class="btn btn-success btn-sm" title="Agregar al carrito">
+                                        <i class="bi bi-cart-plus"></i>
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="col-12">
+                <div class="alert alert-info text-center" role="alert">
+                    No hay lanzamientos recientes disponibles.
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    </div>
+{% endblock %}

@@ -6,7 +6,7 @@ admin.site.site_title = 'MamboStore Admin'
 admin.site.index_title = 'Gestión Operativa de Recursos y Servicios'
 
 
-# --- 2. CONFIGURACIÓN AVANZADA DE MODELADMIN PARA GÉNERO ---
+
 @admin.register(Genero)
 class GeneroAdmin(admin.ModelAdmin):
     list_display = ('nombre', 'slug')
@@ -14,7 +14,7 @@ class GeneroAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug': ('nombre',)}
 
 
-# --- 2. CONFIGURACIÓN AVANZADA DE MODELADMIN PARA VIDEOJUEGO ---
+
 @admin.register(Videojuego)
 class VideojuegoAdmin(admin.ModelAdmin):
 

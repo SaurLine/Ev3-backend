@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+
+{% block title %}Catálogo - MamboStore{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row mb-4 align-items-center">
+        <div class="col">
+            <h2 class="fw-bold text-dark"><i class="bi bi-grid-3x3-gap-fill text-primary"></i> Catálogo Completo</h2>
+            <p class="text-muted">Explora todos los videojuegos disponibles en la tienda.</p>
+        </div>
+        
+        {% if user.is_staff or user.perfilusuario.rol == 'Admin' %}
+        <div class="col-auto">
+            <a href="{% url 'crear_juego' %}" class="btn btn-primary shadow-sm">
+                <i class="bi bi-plus-circle"></i> Nuevo Juego
+            </a>
+        </div>
+        {% endif %}
+    </div>
+
+
+    <div class="mb-4 pb-2 border-bottom d-flex flex-wrap gap-2 align-items-center">
+    <span class="fw-semibold text-secondary me-2"><i class="bi bi-filter"></i> Filtrar por:</span>
+    
+    <a href="{% url 'catalogo' %}" class="btn {% if not genero_seleccionado %}btn-dark{% else %}btn-outline-secondary{% endif %} btn-sm rounded-pill px-3">
+        Todos
+    </a>
+    
+    {% for gen in generos %}
+        <a href="{% url 'catalogo' %}?genero={{ gen.id }}" class="btn {% if genero_seleccionado == gen.id %}btn-dark{% else %}btn-outline-secondary{% endif %} btn-sm rounded-pill px-3">
+            {{ gen.nombre }}
+        </a>
+    {% endfor %}
+</div>
+
+
+    <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4">
+        {% for juego in juegos %}
+            <div class="col">
+                <div class="card h-100 shadow-sm border-0 {% if juego.stock <= 0 or not juego.activo %}opacity-75 bg-light{% endif %}">
+                    {% if juego.imagen %}
+                        <img src="{{ juego.imagen.url }}" class="card-img-top" alt="{{ juego.titulo }}" style="height: 180px; object-fit: cover;">
+                    {% else %}
+                        <div class="bg-secondary text-white d-flex align-items-center justify-content-center" style="height: 180px;">
+                            <span>Sin Imagen</span>
+                        </div>
+                    {% endif %}
+                    
+                    <div class="card-body d-flex flex-column">
+                        <div class="mb-2 d-flex justify-content-between align-items-center">
+                            <div>
+                                {% if juego.genero %}
+                                    <span class="badge bg-secondary">{{ juego.genero.nombre }}</span>
+                                {% endif %}
+                                <span class="badge bg-info text-dark">{{ juego.get_plataforma_display }}</span>
+                            </div>
+                            
+                            {% if juego.stock > 0 and juego.activo %}
+                                <span class="badge bg-success">Stock: {{ juego.stock }}</span>
+                            {% else %}
+                                <span class="badge bg-danger">Sin Stock</span>
+                            {% endif %}
+                        </div>
+                        
+                        <h5 class="card-title fw-bold text-truncate">{{ juego.titulo }}</h5>
+                        <p class="card-text text-muted small flex-grow-1">{{ juego.descripcion|truncatechars:70 }}</p>
+                        
+                        <div class="d-flex justify-content-between align-items-center mt-3 pt-2 border-top">
+                            <span class="fs-5 text-success fw-bold">${{ juego.precio }}</span>
+                            <div>
+                                {% if juego.slug %}
+                                    <a href="{% url 'detalle_juego_slug' juego.slug %}" class="btn btn-outline-primary btn-sm">Detalle</a>
+                                {% else %}
+                                    <a href="{% url 'detalle_juego' juego.id %}" class="btn btn-outline-primary btn-sm">Detalle</a>
+                                {% endif %}
+                                
+                                {% if juego.stock > 0 and juego.activo %}
+                                    <a href="{% url 'agregar_al_carrito' juego.id %}" class="btn btn-success btn-sm" title="Agregar al carrito">
+                                        <i class="bi bi-cart-plus"></i>
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        {% if user.is_staff or user.perfilusuario.rol == 'Admin' %}
+                        <div class="mt-3 pt-2 border-top d-flex justify-content-between">
+                            <a href="{% url 'editar_juego' juego.id %}" class="btn btn-warning btn-sm w-50 me-1">
+                                <i class="bi bi-pencil"></i> Editar
+                            </a>
+                            <a href="{% url 'eliminar_juego' juego.id %}" class="btn btn-danger btn-sm w-50 ms-1">
+                                <i class="bi bi-trash"></i> Eliminar
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="col-12 text-center py-5">
+                <div class="alert alert-warning" role="alert">
+                    No hay videojuegos disponibles para este género en este momento.
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -1,24 +1,42 @@
 from django.core.management.base import BaseCommand
 from django.contrib.auth.models import User
-from usuarios.models import PerfilUsuario  # <-- Importado desde la app usuarios
-from models import Genero, Videojuego
+from apps.usuarios.models import PerfilUsuario
+from apps.juegos.models import Genero, Videojuego  
 from decimal import Decimal
 
 class Command(BaseCommand):
-    help = 'Pobla la base de datos con usuarios, perfiles y videojuegos.'
+    help = 'Pobla la base de datos con el usuario administrador, perfiles, géneros y videojuegos de prueba.'
 
     def handle(self, *args, **kwargs):
-        admin_user, _ = User.objects.get_or_create(
+        self.stdout.write(self.style.WARNING('Iniciando proceso de población de datos...'))
+
+
+        admin_user, created = User.objects.get_or_create(
             username='admin_tienda',
-            defaults={'email': 'admin@tiendajuegos.com', 'is_staff': True, 'is_superuser': True}
+            defaults={
+                'email': 'admin@tiendajuegos.com', 
+                'first_name': 'Administrador',
+                'is_staff': True, 
+                'is_superuser': True
+            }
         )
         admin_user.set_password('admin1234')
         admin_user.save()
 
+
         PerfilUsuario.objects.get_or_create(
             user=admin_user,
-            defaults={'rut': '12345678-9', 'telefono': '+56911111111', 'rol_institucional': PerfilUsuario.RolInstitucional.ADMINISTRADOR}
+            defaults={
+                'rut': '12345678-9', 
+                'telefono': '+56911111111', 
+                'rol_institucional': PerfilUsuario.RolInstitucional.ADMINISTRADOR
+            }
         )
+        if created:
+            self.stdout.write(self.style.SUCCESS('-> Administrador creado: admin_tienda / admin1234'))
+        else:
+            self.stdout.write('-> El administrador ya existía.')
+
 
         generos_data = [
             {"nombre": "Acción y Aventura", "slug": "accion-y-aventura"},
@@ -140,7 +158,7 @@ class Command(BaseCommand):
                 "stock": 0,
                 "estado": Videojuego.EstadoJuego.AGOTADO,
                 "genero_slug": "deportes",
-                "activo": False  
+                "activo": True
             },
         ]
 
